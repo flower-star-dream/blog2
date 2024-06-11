@@ -1,697 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
-<search>
-  <entry>
-    <title>RSA算法</title>
-    <url>/2024/05/19/RSA%E7%AE%97%E6%B3%95/</url>
-    <content><![CDATA[<h1 id="RSA算法简介"><a href="#RSA算法简介" class="headerlink" title="RSA算法简介"></a>RSA算法简介</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;RSA加密算法是一种非对称加密算法。在公开密钥加密和电子商业中RSA被广泛使用。RSA是1977年由罗纳德·李维斯特（Ron Rivest）、阿迪·萨莫尔（Adi Shamir）和伦纳德·阿德曼（Leonard Adleman）一起提出的。当时他们三人都在麻省理工学院工作。RSA就是他们三人姓氏开头字母拼在一起组成的。</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;在详细介绍RSA算法之前，我们先来了解一下什么是对称和非对称加密。</p>
-<h2 id="对称加密算法"><a href="#对称加密算法" class="headerlink" title="对称加密算法"></a>对称加密算法</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;对称加密算法是应用较早的加密算法，技术成熟。在对称加密算法中，数据发信方将明文(原始数据)和加密密钥一起经过特殊加密算法处理后，使其变成复杂的加密密文发送出去。收信方收到密文后，若想解读原文，则需要使用加密用过的密钥及相同算法的逆算法对密文进行解密，才能使其恢复成可读明文。在对称加密算法中，使用的密钥只有一个，发收信双方都使用这个密钥对数据进行加密和解密，这就要求解密方事先必须知道加密密钥。</p>
-<p><img src="/img/对称加密.png" alt="img"></p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;而最简单的对称加密算法则是凯撒算法，它将字母表中的字母移动一定位置而实现加密。例如如果向右移动 3 位，则 字母 A 将变为 D，字母 B 将变为 E，…，字母 X 变成 A，字母 Y 则变为 B，字母 Z 变为 C。</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;因此，假如有个明文<a href="https://so.csdn.net/so/search?q=%E5%AD%97%E7%AC%A6%E4%B8%B2&amp;spm=1001.2101.3001.7020">字符串</a>“Like”用这种方法加密的话，将变为密文： “Olnh” 。而如果要解密，则只要将字母向相反方向移动同样位数即可。如密文“Olnh”每个字母左移三位 变为“Like” 。这里，移动的位数“3”是加密和解密所用的密钥。</p>
-<p>代码实现如下：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">caesar</span>(<span class="params">s, offset</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    凯撒密码加密和解密。</span></span><br><span class="line"><span class="string">    :param s: 待加密或解密的字符串</span></span><br><span class="line"><span class="string">    :param offset: 偏移量，正数为加密，负数为解密</span></span><br><span class="line"><span class="string">    :return: 加密或解密后的字符串</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    cipher = <span class="string">&quot;&quot;</span></span><br><span class="line">    <span class="keyword">for</span> c <span class="keyword">in</span> s:</span><br><span class="line">        <span class="keyword">if</span> <span class="string">&#x27;a&#x27;</span> &lt;= c &lt;= <span class="string">&#x27;z&#x27;</span>:  <span class="comment"># 如果是小写字母</span></span><br><span class="line">            new_char = <span class="built_in">chr</span>((<span class="built_in">ord</span>(c) - <span class="built_in">ord</span>(<span class="string">&#x27;a&#x27;</span>) + offset) % <span class="number">26</span> + <span class="built_in">ord</span>(<span class="string">&#x27;a&#x27;</span>))  <span class="comment"># 根据偏移量计算新的字符</span></span><br><span class="line">        <span class="keyword">elif</span> <span class="string">&#x27;A&#x27;</span> &lt;= c &lt;= <span class="string">&#x27;Z&#x27;</span>:  <span class="comment"># 如果是大写字母</span></span><br><span class="line">            new_char = <span class="built_in">chr</span>((<span class="built_in">ord</span>(c) - <span class="built_in">ord</span>(<span class="string">&#x27;A&#x27;</span>) + offset) % <span class="number">26</span> + <span class="built_in">ord</span>(<span class="string">&#x27;A&#x27;</span>))  <span class="comment"># 根据偏移量计算新的字符</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            new_char = c  <span class="comment"># 非字母字符不变</span></span><br><span class="line">        cipher += new_char  <span class="comment"># 将新字符添加到结果字符串中</span></span><br><span class="line">    <span class="keyword">return</span> cipher</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        str0 = <span class="string">&quot;Like&quot;</span></span><br><span class="line">        <span class="comment"># 加密操作，将&quot;Hello&quot;中的每个字母向前移动3位</span></span><br><span class="line">        cipher = caesar(str0, <span class="number">3</span>)</span><br><span class="line">        <span class="comment"># 解密操作，将密文向前移动-3位，即向后移动3位回到原始文本</span></span><br><span class="line">        text = caesar(cipher, -<span class="number">3</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;原文：&quot;</span> + str0 + <span class="string">&quot;\n加密后：&quot;</span> + cipher + <span class="string">&quot;\n解密后：&quot;</span> + text)</span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;发生错误：&quot;</span> + <span class="built_in">str</span>(e))</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    main()  <span class="comment"># 程序入口</span></span><br></pre></td></tr></table></figure>
-<p>运行效果如下：</p>
-<blockquote>
-<p>原文：Like<br>加密后：Olnh<br>解密后：Like</p>
-</blockquote>
-<p>显然，这种加密方式虽然计算量小、加密速度快、加密效率高，但一旦使用频率高，极易被找出规律后使用频度分析法破译。因此，人们又提出了非对称加密的概念。</p>
-<h2 id="非对称加密算法"><a href="#非对称加密算法" class="headerlink" title="非对称加密算法"></a>非对称加密算法</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;W.Diffie和M.Hellman 1976年在IEEE Trans.on Information刊物上发表了” New Direction in Cryptography”文章，提出了”非对称密码体制即<a href="https://baike.so.com/doc/2181222-2308024.html">公开密钥密码体制</a>“的概念，开创了密码学研究的新方向。</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;非对称加密(公钥加密):指加密和解密使用不同<a href="https://baike.so.com/doc/4918532-5137444.html">密钥</a>的加密算法，也称为公<a href="https://baike.so.com/doc/5284811-5519118.html">私钥</a>加密。假设两个用户要加密交换数据，双方交换<a href="https://baike.so.com/doc/6626282-6840081.html">公钥</a>，使用时一方用对方的公钥加密，另一方即可用自己的私钥解密。如果企业中有n个用户，企业需要生成n对密钥，并分发n个公钥。假设A用B的公钥加密消息，用A的私钥签名，B接到消息后，首先用A的公钥验证签名，确认后用自己的私钥解密消息。由于公钥是可以公开的，用户只要保管好自己的私钥即可，因此加密密钥的分发将变得 十分简单。同时，由于每个用户的私钥是唯一的，其他用户除了可以通过信息发送者的公钥来验证信息的来源是否真实，还可以通过数字签名确保发送者无法否认曾发送过该信息。非对称加密的缺点是加解密速度要远远慢于对称加密，在某些极端情况下，甚至能比对称加密慢上1000倍。</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;非对称加密体系不要求通信双方事先传递<a href="https://baike.so.com/doc/4918532-5137444.html">密钥</a>或有任何约定就能完成<a href="https://baike.so.com/doc/6573691-6787455.html">保密通信</a>，并且<a href="https://baike.so.com/doc/5571847-5787021.html">密钥管理</a>方便，可实现防止假冒和抵赖，因此，更适合网络通信中的保密通信要求。</p>
-<p><img src="/img/非对称加密.png" alt="img"></p>
-<p><strong>其工作原理如下：</strong></p>
-<p>1.A要向B发送信息，A和B都要产生一对用于加密和解密的<a href="https://baike.so.com/doc/6626282-6840081.html">公钥</a>和<a href="https://baike.so.com/doc/5284811-5519118.html">私钥</a>。</p>
-<p>2.A的私钥保密，A的公钥告诉B;B的私钥保密，B的公钥告诉A。</p>
-<p>3.A要给B发送信息时，A用B的公钥加密信息，因为A知道B的公钥。</p>
-<p>4.A将这个消息发给B(已经用B的公钥加密消息)。</p>
-<p>5.B收到这个消息后，B用自己的私钥解密A的消息。其他所有收到这个报文的人都无法解密，因为只有B才有B的私钥。</p>
-<h2 id="RSA加密算法"><a href="#RSA加密算法" class="headerlink" title="RSA加密算法"></a>RSA加密算法</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;经过以上介绍，相信读者对于对称及非对称加密有了初步的了解，接下来我们来介绍RSA加密算法。<br>&nbsp;&nbsp;&nbsp;&nbsp;RSA是目前最有影响力的公钥加密算法，该算法基于一个十分简单的数论事实：将两个大素数相乘十分容易，但那时想要对其乘积进行因式分解却极其困难，因此可以将乘积公开作为加密密钥，即公钥，而两个大素数组合成私钥。公钥是可发布的供任何人使用，私钥则为自己所有，供解密之用。<br>&nbsp;&nbsp;&nbsp;&nbsp;解密者拥有私钥，并且将由私钥计算生成的公钥发布给加密者。加密都使用公钥进行加密，并将密文发送到解密者，解密者用私钥解密将密文解码为明文。</p>
-<p><strong>RSA算法的具体描述如下：</strong></p>
-<p>（1）任意选取两个不同的大素数p和q计算乘积$n=pq，$$\varphi(n)=(p-1)(q-1)$</p>
-<p>（2）任意选取一个大整数e，满足$gcd(e,\varphi(n))=1$(要求e和$\varphi(n)$的最大公因数为1,即要求e和$\varphi(n)$互质),整数e用做加密钥（注意：e的选取是很容易的，例如，所有大于p和q的素数都可用）；</p>
-<p>（3）确定的解密钥d，满足$(de) mod \varphi(n)=1$，即$de=k\varphi(n)+1，k\geq1$是一个任意的整数；所以，若知道e和$\varphi(n)$，则很容易计算出d；</p>
-<p>（4）公开整数n和e，秘密保存d；</p>
-<p>（5）将明文m（m&lt;n是一个整数）加密成密文c，加密算法为</p>
-<script type="math/tex; mode=display">
-c = E(m) = m^{e}mod n</script><p>（6）将密文c（m&lt;n是一个整数）解密为明文m，解密算法为</p>
-<script type="math/tex; mode=display">
-m = D(c) = c^{d}mod n</script><p>在上述步骤中，第1步的理论基础之一是欧拉定理和数和互为素数定理，即任何大于1的整数a能被因式分解为如下唯一形式：</p>
-<script type="math/tex; mode=display">
-a=p1p2…pl(p1,p2，…，pl为素数)</script><p>&nbsp;&nbsp;&nbsp;&nbsp;而欧拉函数$\varphi(n)$表示不大于n且与n互素的正整数的个数。当n是素数时，$\varphi(n)=n-1$。$n=pq$，p、q均为素数时，则$\varphi(n)=\varphi(p)\varphi(q)=(p-1)(q-1)$。</p>
-<p>而第2、3步的理论基础是则是模运算：</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;e和$\varphi(n)$互质保证了模逆元d(即解密钥)的存在，而由模运算中逆元的性质有: 如果 b 是 a 模 n 的逆元，那么 $(a \times b) \mod n = 1$</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;则可根据公式$ (de) mod \varphi(n)=1$求得d。</p>
-<p>而第5、6步可以互推则可用复合加密解密过程用模运算验证：</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;将c代入D(c)，我们有$m =(m^{e}mod\ n)^{d}mod\ n=m^{ed}mod\ n$<br>&nbsp;&nbsp;&nbsp;&nbsp;因此，$m^{ed} \equiv m \ (\text{mod} \ n)$，这意味着明文 m被恢复。</p>
-<p>要注意的是，虽然算法过程和公钥是公开的，但只根据n和e（注意：不是p和q）要计算出d是不可能的。因此，任何人都可对明文进行加密，但只有授权用户（知道d）才可对密文解密。</p>
-<p>以上内容中，(n,e)是公钥，(n,d)是私钥。</p>
-<p>RSA代码简单实现如下：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">legal</span>(<span class="params">p, q</span>):</span><br><span class="line">    <span class="keyword">if</span> p == q:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;两数相等，请重新输入&quot;</span>)</span><br><span class="line">        generate_keys()</span><br><span class="line">    <span class="keyword">elif</span> p &lt;= <span class="number">2</span> <span class="keyword">or</span> q &lt;= <span class="number">2</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;应输入大于2的质数，请重新输入&quot;</span>)</span><br><span class="line">        generate_keys()</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        n = p * q</span><br><span class="line">    <span class="keyword">return</span> n</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">legal2</span>(<span class="params">n</span>):</span><br><span class="line">    <span class="keyword">if</span> n &lt;= <span class="number">2</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;应输入大于2的整数，请重新输入&quot;</span>)</span><br><span class="line">        generate_keys()</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">gcd</span>(<span class="params">e, phi</span>):</span><br><span class="line">    <span class="keyword">if</span> e == <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">return</span> (phi, <span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        g, y, x = gcd(phi % e, e)</span><br><span class="line">        <span class="keyword">return</span> (g, x - (phi // e) * y, y)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">generate_keys</span>():</span><br><span class="line">    p = <span class="built_in">int</span>(<span class="built_in">input</span>(<span class="string">&quot;请输入第一个质数(如10957):&quot;</span>) <span class="keyword">or</span> <span class="string">&#x27;10957&#x27;</span>)</span><br><span class="line">    q = <span class="built_in">int</span>(<span class="built_in">input</span>(<span class="string">&quot;请输入第二个质数(如10973):&quot;</span>) <span class="keyword">or</span> <span class="string">&#x27;10973&#x27;</span>)</span><br><span class="line">    e = <span class="built_in">int</span>(<span class="built_in">input</span>(<span class="string">&quot;请输入公钥(一般为65537):&quot;</span>) <span class="keyword">or</span> <span class="string">&#x27;65537&#x27;</span>)</span><br><span class="line">    n = legal(p, q)</span><br><span class="line">    legal2(e)</span><br><span class="line">    phi = (p - <span class="number">1</span>) * (q - <span class="number">1</span>)</span><br><span class="line">    g, x, y = gcd(e, phi)</span><br><span class="line">    <span class="keyword">if</span> g != <span class="number">1</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;e 和 φ(n) 不互质:gcd(<span class="subst">&#123;e&#125;</span>,<span class="subst">&#123;phi&#125;</span>)!=1，请重新输入&quot;</span>)</span><br><span class="line">        generate_keys()</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        d = x % phi</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> (n, e, d)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">encrypt</span>(<span class="params">n, e</span>):</span><br><span class="line">    m = <span class="built_in">int</span>(<span class="built_in">input</span>(<span class="string">&quot;请输入要加密的明文：&quot;</span>))</span><br><span class="line">    <span class="keyword">if</span> m &gt; n:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;明文m必须小于n&quot;</span>)</span><br><span class="line">    c = <span class="built_in">pow</span>(m, e, n)</span><br><span class="line">    <span class="keyword">return</span> c</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">decode</span>(<span class="params">n, d</span>):</span><br><span class="line">    c = <span class="built_in">int</span>(<span class="built_in">input</span>(<span class="string">&quot;请输入要解密的密文：&quot;</span>))</span><br><span class="line">    <span class="keyword">if</span> c &gt; n:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;密文c必须小于n&quot;</span>)</span><br><span class="line">    m = <span class="built_in">pow</span>(c, d, n)</span><br><span class="line">    <span class="keyword">return</span> m</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">n, e, d = <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">UI</span>(<span class="params">n, e, d</span>):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;——————————RSA加密算法——————————&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;1.生成密钥&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;2.加密&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;3.解密&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;4.重置&quot;</span>)</span><br><span class="line">    state = <span class="built_in">int</span>(<span class="built_in">input</span>(<span class="string">&quot;请输入需要进行的操作：&quot;</span>))</span><br><span class="line">    <span class="keyword">if</span> state == <span class="number">1</span>:</span><br><span class="line">        n, e, d = generate_keys()</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;生成公钥为：(<span class="subst">&#123;n&#125;</span>,<span class="subst">&#123;e&#125;</span>)&quot;</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;生成私钥为：(<span class="subst">&#123;n&#125;</span>,<span class="subst">&#123;d&#125;</span>)&quot;</span>)</span><br><span class="line">        <span class="built_in">input</span>(<span class="string">&quot;按任意键继续...&quot;</span>)</span><br><span class="line">        UI(n, e, d)</span><br><span class="line">    <span class="keyword">elif</span> state == <span class="number">2</span>:</span><br><span class="line">        c = encrypt(n, e)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;加密后密文为：&quot;</span>, c)</span><br><span class="line">        UI(n, e, d)</span><br><span class="line">    <span class="keyword">elif</span> state == <span class="number">3</span>:</span><br><span class="line">        m = decode(n, d)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;解密后明文为：&quot;</span>, m)</span><br><span class="line">        UI(n, e, d)</span><br><span class="line">    <span class="keyword">elif</span> state == <span class="number">4</span>:</span><br><span class="line">        UI(<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;操作不存在，请重新输入&quot;</span>)</span><br><span class="line">        UI(n,e,d)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    UI(n, e, d)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>&nbsp;&nbsp;&nbsp;注意，以上代码只能实现数字的加密解密，若要进行文本的加密解密需要添加字符串&lt;-&gt;ASCII码转换模块实现，低级文字转换版代码如下：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">legal</span>(<span class="params">p, q</span>):</span><br><span class="line">    <span class="keyword">if</span> p == q:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;两数相等，请重新输入&quot;</span>)</span><br><span class="line">        generate_keys()</span><br><span class="line">    <span class="keyword">elif</span> p &lt;= <span class="number">2</span> <span class="keyword">or</span> q &lt;= <span class="number">2</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;应输入大于2的质数，请重新输入&quot;</span>)</span><br><span class="line">        generate_keys()</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        n = p * q</span><br><span class="line">    <span class="keyword">return</span> n</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">legal2</span>(<span class="params">n</span>):</span><br><span class="line">    <span class="keyword">if</span> n &lt;= <span class="number">2</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;应输入大于2的整数，请重新输入&quot;</span>)</span><br><span class="line">        generate_keys()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">gcd</span>(<span class="params">e, phi</span>):</span><br><span class="line">    <span class="keyword">if</span> e == <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">return</span> (phi, <span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        g, y, x = gcd(phi % e, e)</span><br><span class="line">        <span class="keyword">return</span> (g, x - (phi // e) * y, y)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">generate_keys</span>():</span><br><span class="line">    p = <span class="built_in">int</span>(<span class="built_in">input</span>(<span class="string">&quot;请输入第一个质数(如10957):&quot;</span>) <span class="keyword">or</span> <span class="string">&#x27;10957&#x27;</span>)</span><br><span class="line">    q = <span class="built_in">int</span>(<span class="built_in">input</span>(<span class="string">&quot;请输入第二个质数(如10973):&quot;</span>) <span class="keyword">or</span> <span class="string">&#x27;10973&#x27;</span>)</span><br><span class="line">    e = <span class="built_in">int</span>(<span class="built_in">input</span>(<span class="string">&quot;请输入公钥(一般为65537):&quot;</span>) <span class="keyword">or</span> <span class="string">&#x27;65537&#x27;</span>)</span><br><span class="line">    n = legal(p, q)</span><br><span class="line">    legal2(e)</span><br><span class="line">    phi = (p - <span class="number">1</span>) * (q - <span class="number">1</span>)</span><br><span class="line">    g, x, y = gcd(e, phi)</span><br><span class="line">    <span class="keyword">if</span> g != <span class="number">1</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;e 和 φ(n) 不互质:gcd(<span class="subst">&#123;e&#125;</span>,<span class="subst">&#123;phi&#125;</span>)!=1，请重新输入&quot;</span>)</span><br><span class="line">        generate_keys()</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        d = x % phi</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> (n, e, d)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">string_to_numbers</span>(<span class="params">s</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;将字符串转换为整数序列&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> [<span class="built_in">ord</span>(char) <span class="keyword">for</span> char <span class="keyword">in</span> s]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">numbers_to_string</span>(<span class="params">numbers</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;将整数序列转换回字符串&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;&#x27;</span>.join(<span class="built_in">chr</span>(number) <span class="keyword">for</span> number <span class="keyword">in</span> numbers)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">encrypt_string</span>(<span class="params">s, n, e</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;加密字符串&quot;&quot;&quot;</span></span><br><span class="line">    numbers = string_to_numbers(s)</span><br><span class="line">    encrypted_numbers = [<span class="built_in">pow</span>(num, e, n) <span class="keyword">for</span> num <span class="keyword">in</span> numbers]</span><br><span class="line">    <span class="keyword">return</span> encrypted_numbers</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">decrypt_string</span>(<span class="params">encrypted_numbers, n, d</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;解密整数列表，并转换回字符串&quot;&quot;&quot;</span></span><br><span class="line">    numbers = [<span class="built_in">pow</span>(c, d, n) <span class="keyword">for</span> c <span class="keyword">in</span> encrypted_numbers]</span><br><span class="line">    <span class="keyword">return</span> numbers_to_string(numbers)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">n, e, d = <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">UI</span>(<span class="params">n, e, d</span>):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;——————————RSA加密算法——————————&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;1.生成密钥&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;2.加密&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;3.解密&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;4.重置&quot;</span>)</span><br><span class="line">    state = <span class="built_in">int</span>(<span class="built_in">input</span>(<span class="string">&quot;请输入需要进行的操作：&quot;</span>))</span><br><span class="line">    <span class="keyword">if</span> state == <span class="number">1</span>:</span><br><span class="line">        n, e, d = generate_keys()</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;生成公钥为：(<span class="subst">&#123;n&#125;</span>,<span class="subst">&#123;e&#125;</span>)&quot;</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;生成私钥为：(<span class="subst">&#123;n&#125;</span>,<span class="subst">&#123;d&#125;</span>)&quot;</span>)</span><br><span class="line">        <span class="built_in">input</span>(<span class="string">&quot;按任意键继续...&quot;</span>)</span><br><span class="line">        UI(n, e, d)</span><br><span class="line">    <span class="keyword">elif</span> state == <span class="number">2</span>:</span><br><span class="line">        s = <span class="built_in">input</span>(<span class="string">&quot;请输入要加密的明文：&quot;</span>)</span><br><span class="line">        encrypted_numbers = encrypt_string(s, n, e)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;加密后密文为：&quot;</span>, encrypted_numbers)</span><br><span class="line">        UI(n, e, d)  <span class="comment"># 传递加密后的整数列表以便解密</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">elif</span> state == <span class="number">3</span>:</span><br><span class="line">        <span class="comment"># 假设用户将以逗号分隔的密文输入进行解密</span></span><br><span class="line">        encrypted_input = <span class="built_in">input</span>(<span class="string">&quot;请输入以逗号分隔的密文进行解密（例如：1,2,3）：&quot;</span>).strip()</span><br><span class="line">        encrypted_numbers = <span class="built_in">list</span>(<span class="built_in">map</span>(<span class="built_in">int</span>, encrypted_input.split(<span class="string">&#x27;,&#x27;</span>)))</span><br><span class="line">        m = decrypt_string(encrypted_numbers, n, d)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;解密后明文为：&quot;</span>, m)</span><br><span class="line">        <span class="built_in">input</span>(<span class="string">&quot;按任意键继续...&quot;</span>)</span><br><span class="line">        UI(n, e, d)</span><br><span class="line">    <span class="keyword">elif</span> state == <span class="number">4</span>:</span><br><span class="line">        UI(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;操作不存在，请重新输入&quot;</span>)</span><br><span class="line">        UI(n, e, d)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    UI(n, e, d)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>&nbsp;&nbsp;&nbsp;如需验证，可跳转该网站(<a href="https://www.w3cschool.cn/tryrun/showpython/demo_variable?lang=python3)测试代码">https://www.w3cschool.cn/tryrun/showpython/demo_variable?lang=python3)测试代码</a></p>
-]]></content>
+<search> 
+  
+  
+    
+    <entry>
+      <title>站点转移</title>
+      <link href="/blog2/2024/06/11/%E7%AB%99%E7%82%B9%E8%BD%AC%E7%A7%BB/"/>
+      <url>/blog2/2024/06/11/%E7%AB%99%E7%82%B9%E8%BD%AC%E7%A7%BB/</url>
+      
+        <content type="html"><![CDATA[<h1 id="站点已迁移至-lt-a-href-quot-https-flower-star-dream-github-io-quot-gt-https-flower-star-dream-github-io-lt-a-gt"><a href="#站点已迁移至-lt-a-href-quot-https-flower-star-dream-github-io-quot-gt-https-flower-star-dream-github-io-lt-a-gt" class="headerlink" title="站点已迁移至 &lt;a href=&quot;https://flower-star-dream.github.io/&quot;&gt;https://flower-star-dream.github.io/`&lt;/a&gt;`"></a>站点已迁移至 <code>&lt;a href=&quot;https://flower-star-dream.github.io/&quot;&gt;</code><a href="https://flower-star-dream.github.io/`">https://flower-star-dream.github.io/`</a>&lt;/a&gt;`</h1>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> -更新 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>RSA算法</title>
+      <link href="/blog2/2024/05/19/RSA%E7%AE%97%E6%B3%95/"/>
+      <url>/blog2/2024/05/19/RSA%E7%AE%97%E6%B3%95/</url>
+      
+        <content type="html"><![CDATA[<h1 id="RSA算法简介"><a href="#RSA算法简介" class="headerlink" title="RSA算法简介"></a>RSA算法简介</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;RSA加密算法是一种非对称加密算法。在公开密钥加密和电子商业中RSA被广泛使用。RSA是1977年由罗纳德·李维斯特（Ron Rivest）、阿迪·萨莫尔（Adi Shamir）和伦纳德·阿德曼（Leonard Adleman）一起提出的。当时他们三人都在麻省理工学院工作。RSA就是他们三人姓氏开头字母拼在一起组成的。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;在详细介绍RSA算法之前，我们先来了解一下什么是对称和非对称加密。</p><h2 id="对称加密算法"><a href="#对称加密算法" class="headerlink" title="对称加密算法"></a>对称加密算法</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;对称加密算法是应用较早的加密算法，技术成熟。在对称加密算法中，数据发信方将明文(原始数据)和加密密钥一起经过特殊加密算法处理后，使其变成复杂的加密密文发送出去。收信方收到密文后，若想解读原文，则需要使用加密用过的密钥及相同算法的逆算法对密文进行解密，才能使其恢复成可读明文。在对称加密算法中，使用的密钥只有一个，发收信双方都使用这个密钥对数据进行加密和解密，这就要求解密方事先必须知道加密密钥。</p><p><img src="/img/对称加密.png" alt="img"></p><p>&nbsp;&nbsp;&nbsp;&nbsp;而最简单的对称加密算法则是凯撒算法，它将字母表中的字母移动一定位置而实现加密。例如如果向右移动 3 位，则 字母 A 将变为 D，字母 B 将变为 E，…，字母 X 变成 A，字母 Y 则变为 B，字母 Z 变为 C。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;因此，假如有个明文<a href="https://so.csdn.net/so/search?q=%E5%AD%97%E7%AC%A6%E4%B8%B2&amp;spm=1001.2101.3001.7020">字符串</a>“Like”用这种方法加密的话，将变为密文： “Olnh” 。而如果要解密，则只要将字母向相反方向移动同样位数即可。如密文“Olnh”每个字母左移三位 变为“Like” 。这里，移动的位数“3”是加密和解密所用的密钥。</p><p>代码实现如下：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">caesar</span>(<span class="params">s, offset</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    凯撒密码加密和解密。</span></span><br><span class="line"><span class="string">    :param s: 待加密或解密的字符串</span></span><br><span class="line"><span class="string">    :param offset: 偏移量，正数为加密，负数为解密</span></span><br><span class="line"><span class="string">    :return: 加密或解密后的字符串</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    cipher = <span class="string">&quot;&quot;</span></span><br><span class="line">    <span class="keyword">for</span> c <span class="keyword">in</span> s:</span><br><span class="line">        <span class="keyword">if</span> <span class="string">&#x27;a&#x27;</span> &lt;= c &lt;= <span class="string">&#x27;z&#x27;</span>:  <span class="comment"># 如果是小写字母</span></span><br><span class="line">            new_char = <span class="built_in">chr</span>((<span class="built_in">ord</span>(c) - <span class="built_in">ord</span>(<span class="string">&#x27;a&#x27;</span>) + offset) % <span class="number">26</span> + <span class="built_in">ord</span>(<span class="string">&#x27;a&#x27;</span>))  <span class="comment"># 根据偏移量计算新的字符</span></span><br><span class="line">        <span class="keyword">elif</span> <span class="string">&#x27;A&#x27;</span> &lt;= c &lt;= <span class="string">&#x27;Z&#x27;</span>:  <span class="comment"># 如果是大写字母</span></span><br><span class="line">            new_char = <span class="built_in">chr</span>((<span class="built_in">ord</span>(c) - <span class="built_in">ord</span>(<span class="string">&#x27;A&#x27;</span>) + offset) % <span class="number">26</span> + <span class="built_in">ord</span>(<span class="string">&#x27;A&#x27;</span>))  <span class="comment"># 根据偏移量计算新的字符</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            new_char = c  <span class="comment"># 非字母字符不变</span></span><br><span class="line">        cipher += new_char  <span class="comment"># 将新字符添加到结果字符串中</span></span><br><span class="line">    <span class="keyword">return</span> cipher</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        str0 = <span class="string">&quot;Like&quot;</span></span><br><span class="line">        <span class="comment"># 加密操作，将&quot;Hello&quot;中的每个字母向前移动3位</span></span><br><span class="line">        cipher = caesar(str0, <span class="number">3</span>)</span><br><span class="line">        <span class="comment"># 解密操作，将密文向前移动-3位，即向后移动3位回到原始文本</span></span><br><span class="line">        text = caesar(cipher, -<span class="number">3</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;原文：&quot;</span> + str0 + <span class="string">&quot;\n加密后：&quot;</span> + cipher + <span class="string">&quot;\n解密后：&quot;</span> + text)</span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;发生错误：&quot;</span> + <span class="built_in">str</span>(e))</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    main()  <span class="comment"># 程序入口</span></span><br></pre></td></tr></table></figure><p>运行效果如下：</p><blockquote><p>原文：Like<br>加密后：Olnh<br>解密后：Like</p></blockquote><p>显然，这种加密方式虽然计算量小、加密速度快、加密效率高，但一旦使用频率高，极易被找出规律后使用频度分析法破译。因此，人们又提出了非对称加密的概念。</p><h2 id="非对称加密算法"><a href="#非对称加密算法" class="headerlink" title="非对称加密算法"></a>非对称加密算法</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;W.Diffie和M.Hellman 1976年在IEEE Trans.on Information刊物上发表了” New Direction in Cryptography”文章，提出了”非对称密码体制即<a href="https://baike.so.com/doc/2181222-2308024.html">公开密钥密码体制</a>“的概念，开创了密码学研究的新方向。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;非对称加密(公钥加密):指加密和解密使用不同<a href="https://baike.so.com/doc/4918532-5137444.html">密钥</a>的加密算法，也称为公<a href="https://baike.so.com/doc/5284811-5519118.html">私钥</a>加密。假设两个用户要加密交换数据，双方交换<a href="https://baike.so.com/doc/6626282-6840081.html">公钥</a>，使用时一方用对方的公钥加密，另一方即可用自己的私钥解密。如果企业中有n个用户，企业需要生成n对密钥，并分发n个公钥。假设A用B的公钥加密消息，用A的私钥签名，B接到消息后，首先用A的公钥验证签名，确认后用自己的私钥解密消息。由于公钥是可以公开的，用户只要保管好自己的私钥即可，因此加密密钥的分发将变得 十分简单。同时，由于每个用户的私钥是唯一的，其他用户除了可以通过信息发送者的公钥来验证信息的来源是否真实，还可以通过数字签名确保发送者无法否认曾发送过该信息。非对称加密的缺点是加解密速度要远远慢于对称加密，在某些极端情况下，甚至能比对称加密慢上1000倍。</p><p>&nbsp;&nbsp;&nbsp;&nbsp;非对称加密体系不要求通信双方事先传递<a href="https://baike.so.com/doc/4918532-5137444.html">密钥</a>或有任何约定就能完成<a href="https://baike.so.com/doc/6573691-6787455.html">保密通信</a>，并且<a href="https://baike.so.com/doc/5571847-5787021.html">密钥管理</a>方便，可实现防止假冒和抵赖，因此，更适合网络通信中的保密通信要求。</p><p><img src="/img/非对称加密.png" alt="img"></p><p><strong>其工作原理如下：</strong></p><p>1.A要向B发送信息，A和B都要产生一对用于加密和解密的<a href="https://baike.so.com/doc/6626282-6840081.html">公钥</a>和<a href="https://baike.so.com/doc/5284811-5519118.html">私钥</a>。</p><p>2.A的私钥保密，A的公钥告诉B;B的私钥保密，B的公钥告诉A。</p><p>3.A要给B发送信息时，A用B的公钥加密信息，因为A知道B的公钥。</p><p>4.A将这个消息发给B(已经用B的公钥加密消息)。</p><p>5.B收到这个消息后，B用自己的私钥解密A的消息。其他所有收到这个报文的人都无法解密，因为只有B才有B的私钥。</p><h2 id="RSA加密算法"><a href="#RSA加密算法" class="headerlink" title="RSA加密算法"></a>RSA加密算法</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;经过以上介绍，相信读者对于对称及非对称加密有了初步的了解，接下来我们来介绍RSA加密算法。<br>&nbsp;&nbsp;&nbsp;&nbsp;RSA是目前最有影响力的公钥加密算法，该算法基于一个十分简单的数论事实：将两个大素数相乘十分容易，但那时想要对其乘积进行因式分解却极其困难，因此可以将乘积公开作为加密密钥，即公钥，而两个大素数组合成私钥。公钥是可发布的供任何人使用，私钥则为自己所有，供解密之用。<br>&nbsp;&nbsp;&nbsp;&nbsp;解密者拥有私钥，并且将由私钥计算生成的公钥发布给加密者。加密都使用公钥进行加密，并将密文发送到解密者，解密者用私钥解密将密文解码为明文。</p><p><strong>RSA算法的具体描述如下：</strong></p><p>（1）任意选取两个不同的大素数p和q计算乘积$n=pq，$$\varphi(n)=(p-1)(q-1)$</p><p>（2）任意选取一个大整数e，满足$gcd(e,\varphi(n))=1$(要求e和$\varphi(n)$的最大公因数为1,即要求e和$\varphi(n)$互质),整数e用做加密钥（注意：e的选取是很容易的，例如，所有大于p和q的素数都可用）；</p><p>（3）确定的解密钥d，满足$(de) mod \varphi(n)=1$，即$de=k\varphi(n)+1，k\geq1$是一个任意的整数；所以，若知道e和$\varphi(n)$，则很容易计算出d；</p><p>（4）公开整数n和e，秘密保存d；</p><p>（5）将明文m（m&lt;n是一个整数）加密成密文c，加密算法为</p><script type="math/tex; mode=display">c = E(m) = m^{e}mod n</script><p>（6）将密文c（m&lt;n是一个整数）解密为明文m，解密算法为</p><script type="math/tex; mode=display">m = D(c) = c^{d}mod n</script><p>在上述步骤中，第1步的理论基础之一是欧拉定理和数和互为素数定理，即任何大于1的整数a能被因式分解为如下唯一形式：</p><script type="math/tex; mode=display">a=p1p2…pl(p1,p2，…，pl为素数)</script><p>&nbsp;&nbsp;&nbsp;&nbsp;而欧拉函数$\varphi(n)$表示不大于n且与n互素的正整数的个数。当n是素数时，$\varphi(n)=n-1$。$n=pq$，p、q均为素数时，则$\varphi(n)=\varphi(p)\varphi(q)=(p-1)(q-1)$。</p><p>而第2、3步的理论基础是则是模运算：</p><p>&nbsp;&nbsp;&nbsp;&nbsp;e和$\varphi(n)$互质保证了模逆元d(即解密钥)的存在，而由模运算中逆元的性质有: 如果 b 是 a 模 n 的逆元，那么 $(a \times b) \mod n = 1$</p><p>&nbsp;&nbsp;&nbsp;&nbsp;则可根据公式$ (de) mod \varphi(n)=1$求得d。</p><p>而第5、6步可以互推则可用复合加密解密过程用模运算验证：</p><p>&nbsp;&nbsp;&nbsp;&nbsp;将c代入D(c)，我们有$m =(m^{e}mod\ n)^{d}mod\ n=m^{ed}mod\ n$<br>&nbsp;&nbsp;&nbsp;&nbsp;因此，$m^{ed} \equiv m \ (\text{mod} \ n)$，这意味着明文 m被恢复。</p><p>要注意的是，虽然算法过程和公钥是公开的，但只根据n和e（注意：不是p和q）要计算出d是不可能的。因此，任何人都可对明文进行加密，但只有授权用户（知道d）才可对密文解密。</p><p>以上内容中，(n,e)是公钥，(n,d)是私钥。</p><p>RSA代码简单实现如下：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">legal</span>(<span class="params">p, q</span>):</span><br><span class="line">    <span class="keyword">if</span> p == q:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;两数相等，请重新输入&quot;</span>)</span><br><span class="line">        generate_keys()</span><br><span class="line">    <span class="keyword">elif</span> p &lt;= <span class="number">2</span> <span class="keyword">or</span> q &lt;= <span class="number">2</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;应输入大于2的质数，请重新输入&quot;</span>)</span><br><span class="line">        generate_keys()</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        n = p * q</span><br><span class="line">    <span class="keyword">return</span> n</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">legal2</span>(<span class="params">n</span>):</span><br><span class="line">    <span class="keyword">if</span> n &lt;= <span class="number">2</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;应输入大于2的整数，请重新输入&quot;</span>)</span><br><span class="line">        generate_keys()</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">gcd</span>(<span class="params">e, phi</span>):</span><br><span class="line">    <span class="keyword">if</span> e == <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">return</span> (phi, <span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        g, y, x = gcd(phi % e, e)</span><br><span class="line">        <span class="keyword">return</span> (g, x - (phi // e) * y, y)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">generate_keys</span>():</span><br><span class="line">    p = <span class="built_in">int</span>(<span class="built_in">input</span>(<span class="string">&quot;请输入第一个质数(如10957):&quot;</span>) <span class="keyword">or</span> <span class="string">&#x27;10957&#x27;</span>)</span><br><span class="line">    q = <span class="built_in">int</span>(<span class="built_in">input</span>(<span class="string">&quot;请输入第二个质数(如10973):&quot;</span>) <span class="keyword">or</span> <span class="string">&#x27;10973&#x27;</span>)</span><br><span class="line">    e = <span class="built_in">int</span>(<span class="built_in">input</span>(<span class="string">&quot;请输入公钥(一般为65537):&quot;</span>) <span class="keyword">or</span> <span class="string">&#x27;65537&#x27;</span>)</span><br><span class="line">    n = legal(p, q)</span><br><span class="line">    legal2(e)</span><br><span class="line">    phi = (p - <span class="number">1</span>) * (q - <span class="number">1</span>)</span><br><span class="line">    g, x, y = gcd(e, phi)</span><br><span class="line">    <span class="keyword">if</span> g != <span class="number">1</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;e 和 φ(n) 不互质:gcd(<span class="subst">&#123;e&#125;</span>,<span class="subst">&#123;phi&#125;</span>)!=1，请重新输入&quot;</span>)</span><br><span class="line">        generate_keys()</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        d = x % phi</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> (n, e, d)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">encrypt</span>(<span class="params">n, e</span>):</span><br><span class="line">    m = <span class="built_in">int</span>(<span class="built_in">input</span>(<span class="string">&quot;请输入要加密的明文：&quot;</span>))</span><br><span class="line">    <span class="keyword">if</span> m &gt; n:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;明文m必须小于n&quot;</span>)</span><br><span class="line">    c = <span class="built_in">pow</span>(m, e, n)</span><br><span class="line">    <span class="keyword">return</span> c</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">decode</span>(<span class="params">n, d</span>):</span><br><span class="line">    c = <span class="built_in">int</span>(<span class="built_in">input</span>(<span class="string">&quot;请输入要解密的密文：&quot;</span>))</span><br><span class="line">    <span class="keyword">if</span> c &gt; n:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;密文c必须小于n&quot;</span>)</span><br><span class="line">    m = <span class="built_in">pow</span>(c, d, n)</span><br><span class="line">    <span class="keyword">return</span> m</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">n, e, d = <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">UI</span>(<span class="params">n, e, d</span>):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;——————————RSA加密算法——————————&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;1.生成密钥&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;2.加密&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;3.解密&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;4.重置&quot;</span>)</span><br><span class="line">    state = <span class="built_in">int</span>(<span class="built_in">input</span>(<span class="string">&quot;请输入需要进行的操作：&quot;</span>))</span><br><span class="line">    <span class="keyword">if</span> state == <span class="number">1</span>:</span><br><span class="line">        n, e, d = generate_keys()</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;生成公钥为：(<span class="subst">&#123;n&#125;</span>,<span class="subst">&#123;e&#125;</span>)&quot;</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;生成私钥为：(<span class="subst">&#123;n&#125;</span>,<span class="subst">&#123;d&#125;</span>)&quot;</span>)</span><br><span class="line">        <span class="built_in">input</span>(<span class="string">&quot;按任意键继续...&quot;</span>)</span><br><span class="line">        UI(n, e, d)</span><br><span class="line">    <span class="keyword">elif</span> state == <span class="number">2</span>:</span><br><span class="line">        c = encrypt(n, e)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;加密后密文为：&quot;</span>, c)</span><br><span class="line">        UI(n, e, d)</span><br><span class="line">    <span class="keyword">elif</span> state == <span class="number">3</span>:</span><br><span class="line">        m = decode(n, d)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;解密后明文为：&quot;</span>, m)</span><br><span class="line">        UI(n, e, d)</span><br><span class="line">    <span class="keyword">elif</span> state == <span class="number">4</span>:</span><br><span class="line">        UI(<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;操作不存在，请重新输入&quot;</span>)</span><br><span class="line">        UI(n,e,d)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    UI(n, e, d)</span><br><span class="line"></span><br></pre></td></tr></table></figure><p>&nbsp;&nbsp;&nbsp;注意，以上代码只能实现数字的加密解密，若要进行文本的加密解密需要添加字符串&lt;-&gt;ASCII码转换模块实现，低级文字转换版代码如下：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">legal</span>(<span class="params">p, q</span>):</span><br><span class="line">    <span class="keyword">if</span> p == q:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;两数相等，请重新输入&quot;</span>)</span><br><span class="line">        generate_keys()</span><br><span class="line">    <span class="keyword">elif</span> p &lt;= <span class="number">2</span> <span class="keyword">or</span> q &lt;= <span class="number">2</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;应输入大于2的质数，请重新输入&quot;</span>)</span><br><span class="line">        generate_keys()</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        n = p * q</span><br><span class="line">    <span class="keyword">return</span> n</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">legal2</span>(<span class="params">n</span>):</span><br><span class="line">    <span class="keyword">if</span> n &lt;= <span class="number">2</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;应输入大于2的整数，请重新输入&quot;</span>)</span><br><span class="line">        generate_keys()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">gcd</span>(<span class="params">e, phi</span>):</span><br><span class="line">    <span class="keyword">if</span> e == <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">return</span> (phi, <span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        g, y, x = gcd(phi % e, e)</span><br><span class="line">        <span class="keyword">return</span> (g, x - (phi // e) * y, y)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">generate_keys</span>():</span><br><span class="line">    p = <span class="built_in">int</span>(<span class="built_in">input</span>(<span class="string">&quot;请输入第一个质数(如10957):&quot;</span>) <span class="keyword">or</span> <span class="string">&#x27;10957&#x27;</span>)</span><br><span class="line">    q = <span class="built_in">int</span>(<span class="built_in">input</span>(<span class="string">&quot;请输入第二个质数(如10973):&quot;</span>) <span class="keyword">or</span> <span class="string">&#x27;10973&#x27;</span>)</span><br><span class="line">    e = <span class="built_in">int</span>(<span class="built_in">input</span>(<span class="string">&quot;请输入公钥(一般为65537):&quot;</span>) <span class="keyword">or</span> <span class="string">&#x27;65537&#x27;</span>)</span><br><span class="line">    n = legal(p, q)</span><br><span class="line">    legal2(e)</span><br><span class="line">    phi = (p - <span class="number">1</span>) * (q - <span class="number">1</span>)</span><br><span class="line">    g, x, y = gcd(e, phi)</span><br><span class="line">    <span class="keyword">if</span> g != <span class="number">1</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;e 和 φ(n) 不互质:gcd(<span class="subst">&#123;e&#125;</span>,<span class="subst">&#123;phi&#125;</span>)!=1，请重新输入&quot;</span>)</span><br><span class="line">        generate_keys()</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        d = x % phi</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> (n, e, d)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">string_to_numbers</span>(<span class="params">s</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;将字符串转换为整数序列&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> [<span class="built_in">ord</span>(char) <span class="keyword">for</span> char <span class="keyword">in</span> s]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">numbers_to_string</span>(<span class="params">numbers</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;将整数序列转换回字符串&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;&#x27;</span>.join(<span class="built_in">chr</span>(number) <span class="keyword">for</span> number <span class="keyword">in</span> numbers)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">encrypt_string</span>(<span class="params">s, n, e</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;加密字符串&quot;&quot;&quot;</span></span><br><span class="line">    numbers = string_to_numbers(s)</span><br><span class="line">    encrypted_numbers = [<span class="built_in">pow</span>(num, e, n) <span class="keyword">for</span> num <span class="keyword">in</span> numbers]</span><br><span class="line">    <span class="keyword">return</span> encrypted_numbers</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">decrypt_string</span>(<span class="params">encrypted_numbers, n, d</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;解密整数列表，并转换回字符串&quot;&quot;&quot;</span></span><br><span class="line">    numbers = [<span class="built_in">pow</span>(c, d, n) <span class="keyword">for</span> c <span class="keyword">in</span> encrypted_numbers]</span><br><span class="line">    <span class="keyword">return</span> numbers_to_string(numbers)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">n, e, d = <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">UI</span>(<span class="params">n, e, d</span>):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;——————————RSA加密算法——————————&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;1.生成密钥&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;2.加密&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;3.解密&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;4.重置&quot;</span>)</span><br><span class="line">    state = <span class="built_in">int</span>(<span class="built_in">input</span>(<span class="string">&quot;请输入需要进行的操作：&quot;</span>))</span><br><span class="line">    <span class="keyword">if</span> state == <span class="number">1</span>:</span><br><span class="line">        n, e, d = generate_keys()</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;生成公钥为：(<span class="subst">&#123;n&#125;</span>,<span class="subst">&#123;e&#125;</span>)&quot;</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;生成私钥为：(<span class="subst">&#123;n&#125;</span>,<span class="subst">&#123;d&#125;</span>)&quot;</span>)</span><br><span class="line">        <span class="built_in">input</span>(<span class="string">&quot;按任意键继续...&quot;</span>)</span><br><span class="line">        UI(n, e, d)</span><br><span class="line">    <span class="keyword">elif</span> state == <span class="number">2</span>:</span><br><span class="line">        s = <span class="built_in">input</span>(<span class="string">&quot;请输入要加密的明文：&quot;</span>)</span><br><span class="line">        encrypted_numbers = encrypt_string(s, n, e)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;加密后密文为：&quot;</span>, encrypted_numbers)</span><br><span class="line">        UI(n, e, d)  <span class="comment"># 传递加密后的整数列表以便解密</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">elif</span> state == <span class="number">3</span>:</span><br><span class="line">        <span class="comment"># 假设用户将以逗号分隔的密文输入进行解密</span></span><br><span class="line">        encrypted_input = <span class="built_in">input</span>(<span class="string">&quot;请输入以逗号分隔的密文进行解密（例如：1,2,3）：&quot;</span>).strip()</span><br><span class="line">        encrypted_numbers = <span class="built_in">list</span>(<span class="built_in">map</span>(<span class="built_in">int</span>, encrypted_input.split(<span class="string">&#x27;,&#x27;</span>)))</span><br><span class="line">        m = decrypt_string(encrypted_numbers, n, d)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;解密后明文为：&quot;</span>, m)</span><br><span class="line">        <span class="built_in">input</span>(<span class="string">&quot;按任意键继续...&quot;</span>)</span><br><span class="line">        UI(n, e, d)</span><br><span class="line">    <span class="keyword">elif</span> state == <span class="number">4</span>:</span><br><span class="line">        UI(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;操作不存在，请重新输入&quot;</span>)</span><br><span class="line">        UI(n, e, d)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    UI(n, e, d)</span><br><span class="line"></span><br></pre></td></tr></table></figure><p>&nbsp;&nbsp;&nbsp;如需验证，可跳转该网站(<a href="https://www.w3cschool.cn/tryrun/showpython/demo_variable?lang=python3)测试代码">https://www.w3cschool.cn/tryrun/showpython/demo_variable?lang=python3)测试代码</a></p>]]></content>
+      
+      
       <categories>
-        <category>代码</category>
+          
+          <category> 代码 </category>
+          
       </categories>
-      <tags>
-        <tag>RSA</tag>
-        <tag>算法</tag>
-        <tag>数学</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>md全LaTex数学公式代码教程</title>
-    <url>/2024/04/26/md%E5%85%A8LaTex%E6%95%B0%E5%AD%A6%E5%85%AC%E5%BC%8F%E4%BB%A3%E7%A0%81%E6%95%99%E7%A8%8B/</url>
-    <content><![CDATA[<h1 id="md全LaTex数学公式"><a href="#md全LaTex数学公式" class="headerlink" title="md全LaTex数学公式"></a>md全LaTex数学公式</h1><h3 id="特殊符号"><a href="#特殊符号" class="headerlink" title="特殊符号"></a>特殊符号</h3><div class="table-container">
-<table>
-<thead>
-<tr>
-<th>特殊字符</th>
-<th>说 明</th>
-<th>实例</th>
-<th>完整字符串</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>$</td>
-<td>数学公式前后加$是行内公式</td>
-<td>数学公式:<strong>a</strong>=<strong>x</strong>+<strong>y</strong></td>
-<td>\$ a=x+y \$</td>
-</tr>
-<tr>
-<td>$$</td>
-<td>数学公式加$$就是读占一行的公式</td>
-<td>独占一行:<br /><strong>a</strong>=<strong>x</strong>+<strong>y</strong></td>
-<td>\$\$ a=x+y \$\$</td>
-</tr>
-<tr>
-<td>\</td>
-<td>转义字符,特殊字符要显示原意,就在前面加\</td>
-<td>$</td>
-<td>\$\\$\$</td>
-</tr>
-</tbody>
-</table>
-</div>
-<h3 id="常用符号"><a href="#常用符号" class="headerlink" title="常用符号"></a>常用符号</h3><div class="table-container">
-<table>
-<thead>
-<tr>
-<th>运算符</th>
-<th>markdown</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>±</td>
-<td>\pm</td>
-</tr>
-<tr>
-<td>×</td>
-<td>\times</td>
-</tr>
-<tr>
-<td>÷</td>
-<td>\div</td>
-</tr>
-<tr>
-<td>∑</td>
-<td>\sum</td>
-</tr>
-<tr>
-<td>∏</td>
-<td>\prod</td>
-</tr>
-<tr>
-<td>≠</td>
-<td>\neq</td>
-</tr>
-<tr>
-<td>≤</td>
-<td>\leq</td>
-</tr>
-<tr>
-<td>≥</td>
-<td>\geq</td>
-</tr>
-</tbody>
-</table>
-</div>
-<h3 id="希腊字符"><a href="#希腊字符" class="headerlink" title="希腊字符"></a>希腊字符</h3><div class="table-container">
-<table>
-<thead>
-<tr>
-<th>大写</th>
-<th>markdown</th>
-<th>小写</th>
-<th>markdown</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>A</td>
-<td>A</td>
-<td>α</td>
-<td>\alpha</td>
-</tr>
-<tr>
-<td>B</td>
-<td>B</td>
-<td>β</td>
-<td>\beta</td>
-</tr>
-<tr>
-<td>Γ</td>
-<td>\Gamma</td>
-<td>γ</td>
-<td>\gamma</td>
-</tr>
-<tr>
-<td>Δ</td>
-<td>\Delta</td>
-<td>δ</td>
-<td>\delta</td>
-</tr>
-<tr>
-<td>E</td>
-<td>E</td>
-<td>ϵ</td>
-<td>\epsilon</td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td>ε</td>
-<td>\varepsilon</td>
-</tr>
-<tr>
-<td>Z</td>
-<td>Z</td>
-<td>ζ</td>
-<td>\zeta</td>
-</tr>
-<tr>
-<td>H</td>
-<td>H</td>
-<td>η</td>
-<td>\eta</td>
-</tr>
-<tr>
-<td>Θ</td>
-<td>\Theta</td>
-<td>θ</td>
-<td>\theta</td>
-</tr>
-<tr>
-<td>I</td>
-<td>I</td>
-<td>ι</td>
-<td>\iota</td>
-</tr>
-<tr>
-<td>K</td>
-<td>K</td>
-<td>κ</td>
-<td>\kappa</td>
-</tr>
-<tr>
-<td>Λ</td>
-<td>\Lambda</td>
-<td>λ</td>
-<td>\lambda</td>
-</tr>
-<tr>
-<td>M</td>
-<td>M</td>
-<td>μ</td>
-<td>\mu</td>
-</tr>
-<tr>
-<td>N</td>
-<td>N</td>
-<td>ν</td>
-<td>\nu</td>
-</tr>
-<tr>
-<td>Ξ</td>
-<td>\Xi</td>
-<td>ξ</td>
-<td>\xi</td>
-</tr>
-<tr>
-<td>O</td>
-<td>O</td>
-<td>ο</td>
-<td>\omicron</td>
-</tr>
-<tr>
-<td>Π</td>
-<td>\Pi</td>
-<td>π</td>
-<td>\pi</td>
-</tr>
-<tr>
-<td>P</td>
-<td>P</td>
-<td>ρ</td>
-<td>\rho</td>
-</tr>
-<tr>
-<td>Σ</td>
-<td>\Sigma</td>
-<td>σ</td>
-<td>\sigma</td>
-</tr>
-<tr>
-<td>T</td>
-<td>T</td>
-<td>τ</td>
-<td>\tau</td>
-</tr>
-<tr>
-<td>Υ</td>
-<td>\Upsilon</td>
-<td>υ</td>
-<td>\upsilon</td>
-</tr>
-<tr>
-<td>Φ</td>
-<td>\Phi</td>
-<td>ϕ</td>
-<td>\phi</td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td>φ</td>
-<td>\varphi</td>
-</tr>
-<tr>
-<td>X</td>
-<td>X</td>
-<td>χ</td>
-<td>\chi</td>
-</tr>
-<tr>
-<td>Ψ</td>
-<td>\Psi</td>
-<td>ψ</td>
-<td>\psi</td>
-</tr>
-<tr>
-<td>Ω</td>
-<td>\Omega</td>
-<td>ω</td>
-<td>\omega</td>
-</tr>
-</tbody>
-</table>
-</div>
-<h3 id="分数微分"><a href="#分数微分" class="headerlink" title="分数微分"></a>分数微分</h3><div class="table-container">
-<table>
-<thead>
-<tr>
-<th>算式</th>
-<th>markdown</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>分数</td>
-<td></td>
-</tr>
-<tr>
-<td>$\frac{b}{a}$</td>
-<td>\frac{b}{a}</td>
-</tr>
-<tr>
-<td>$\frac{dy}{dx}$</td>
-<td>\frac{dy}{dx}</td>
-</tr>
-<tr>
-<td>$dt$</td>
-<td>dt</td>
-</tr>
-<tr>
-<td>$\partial t$</td>
-<td>\partial t</td>
-</tr>
-<tr>
-<td>$\frac{\partial y}{\partial x}$</td>
-<td>\frac{\partial y}{\partial x}</td>
-</tr>
-<tr>
-<td>$\frac{\partial^{2}}{\partial x<em>{1}\partial x</em>{2}}y$</td>
-<td>\frac{\partial^{2}}{\partial x<em>{1}\partial x</em>{2}}y</td>
-</tr>
-<tr>
-<td>$\begin{matrix}x=a<em>{0}+\frac{1}{a</em>{1}+\frac{1}{a<em>{2}+\frac{1}{a</em>{3}+\frac{1}{a_{4}}}}}\end{matrix}$</td>
-<td>\begin{matrix}x=a<em>{0}+\frac{1}{a</em>{1}+\frac{1}{a<em>{2}+\frac{1}{a</em>{3}+\frac{1}{a_{4}}}}}\end{matrix}</td>
-</tr>
-<tr>
-<td>导数</td>
-<td></td>
-</tr>
-<tr>
-<td>$\dot{a}$</td>
-<td>\dot{a}</td>
-</tr>
-<tr>
-<td>$\ddot{a}$</td>
-<td>\ddot{a}</td>
-</tr>
-<tr>
-<td>${f}^{‘}$</td>
-<td>{f}^{‘}</td>
-</tr>
-<tr>
-<td>${f}^{‘’}$</td>
-<td>{f}^{‘’}</td>
-</tr>
-<tr>
-<td>${f}^{(n)}$</td>
-<td>{f}^{(n)}</td>
-</tr>
-</tbody>
-</table>
-</div>
-<h3 id="根式角标"><a href="#根式角标" class="headerlink" title="根式角标"></a>根式角标</h3><div class="table-container">
-<table>
-<thead>
-<tr>
-<th>算式</th>
-<th>markdown</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>根式</td>
-<td></td>
-</tr>
-<tr>
-<td>$\sqrt{x}$</td>
-<td>\sqrt{x}</td>
-</tr>
-<tr>
-<td>$\sqrt[n]{x}$</td>
-<td>\sqrt[n]{x}</td>
-</tr>
-<tr>
-<td>上下标</td>
-<td></td>
-</tr>
-<tr>
-<td>${x}^{a}$</td>
-<td>{x}^{a}</td>
-</tr>
-<tr>
-<td>${x}_{b}$</td>
-<td>{x}_{b}</td>
-</tr>
-<tr>
-<td>${x}_{b}^{a}$</td>
-<td>{x}_{b}^{a}</td>
-</tr>
-<tr>
-<td>重音符及其他</td>
-<td></td>
-</tr>
-<tr>
-<td>$\hat{a}$</td>
-<td>\hat{a}</td>
-</tr>
-<tr>
-<td>$\check{a}$</td>
-<td>\check{a}</td>
-</tr>
-<tr>
-<td>$\grave{a}$</td>
-<td>\grave{a}</td>
-</tr>
-<tr>
-<td>$\acute{a}$</td>
-<td>\acute{a}</td>
-</tr>
-<tr>
-<td>$\tilde{a}$</td>
-<td>\tilde{a}</td>
-</tr>
-<tr>
-<td>$\breve{a}$</td>
-<td>\breve{a}</td>
-</tr>
-<tr>
-<td>$\bar{a}$</td>
-<td>\bar{a}</td>
-</tr>
-<tr>
-<td>$\overrightarrow{a}$</td>
-<td>\overrightarrow{a}</td>
-</tr>
-<tr>
-<td>${a}^{\circ }$</td>
-<td>{a}^{\circ }</td>
-</tr>
-<tr>
-<td>$\overleftarrow{abc}$</td>
-<td>\overleftarrow{abc}</td>
-</tr>
-<tr>
-<td>$\underline{abc}$</td>
-<td>\underline{abc}</td>
-</tr>
-<tr>
-<td>$\overbrace{abc}$</td>
-<td>\overbrace{abc}</td>
-</tr>
-<tr>
-<td>$\underbrace{abc}$</td>
-<td>\underbrace{abc}</td>
-</tr>
-</tbody>
-</table>
-</div>
-<h3 id="极限对数"><a href="#极限对数" class="headerlink" title="极限对数"></a>极限对数</h3><div class="table-container">
-<table>
-<thead>
-<tr>
-<th>算式</th>
-<th>markdown</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>极限</td>
-<td></td>
-</tr>
-<tr>
-<td>$\lim_{}x$</td>
-<td>\lim_{}x</td>
-</tr>
-<tr>
-<td>$\lim_{x\rightarrow 0}x$</td>
-<td>\lim_{x\rightarrow 0}x</td>
-</tr>
-<tr>
-<td>$\lim_{x\rightarrow \infty }x$</td>
-<td>\lim_{x\rightarrow \infty }x</td>
-</tr>
-<tr>
-<td>$\max_{x∈[0,1]}x$</td>
-<td>\max_{x∈[0,1]}x</td>
-</tr>
-<tr>
-<td>$\min_{x∈[0,1]}x$</td>
-<td>\min_{x∈[0,1]}x</td>
-</tr>
-<tr>
-<td>对数指数</td>
-<td></td>
-</tr>
-<tr>
-<td>$\log_{2}{3}$</td>
-<td>\log_{2}{3}</td>
-</tr>
-<tr>
-<td>$\lg{2}$</td>
-<td>\lg{2}</td>
-</tr>
-<tr>
-<td>$\ln{2}$</td>
-<td>\ln{2}</td>
-</tr>
-<tr>
-<td>$\exp{1}$</td>
-<td>\exp{1}</td>
-</tr>
-</tbody>
-</table>
-</div>
-<h3 id="三角函数"><a href="#三角函数" class="headerlink" title="三角函数"></a>三角函数</h3><div class="table-container">
-<table>
-<thead>
-<tr>
-<th>算式</th>
-<th>markdown</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>三角函数</td>
-<td></td>
-</tr>
-<tr>
-<td>$\sin{1}$</td>
-<td>\sin{1}</td>
-</tr>
-<tr>
-<td>$\cos{1}$</td>
-<td>\cos{1}</td>
-</tr>
-<tr>
-<td>$\tan{1}$</td>
-<td>\tan{1}</td>
-</tr>
-<tr>
-<td>$\cot{1}$</td>
-<td>\cot{1}</td>
-</tr>
-<tr>
-<td>$\sec{1}$</td>
-<td>\sec{1}</td>
-</tr>
-<tr>
-<td>$\csc{1}$</td>
-<td>\csc{1}</td>
-</tr>
-<tr>
-<td>反三角函数</td>
-<td></td>
-</tr>
-<tr>
-<td>$\sin^{-1}{1}$</td>
-<td>\sin^{-1}{1}</td>
-</tr>
-<tr>
-<td>$\cos^{-1}{1}$</td>
-<td>\cos^{-1}{1}</td>
-</tr>
-<tr>
-<td>$\tan^{-1}{1}$</td>
-<td>\tan^{-1}{1}</td>
-</tr>
-<tr>
-<td>$\cot^{-1}{1}$</td>
-<td>\cot^{-1}{1}</td>
-</tr>
-<tr>
-<td>$\sec^{-1}{1}$</td>
-<td>\sec^{-1}{1}</td>
-</tr>
-<tr>
-<td>$\csc^{-1}{1}$</td>
-<td>\csc^{-1}{1}</td>
-</tr>
-<tr>
-<td>$\arcsin{1}$</td>
-<td>\arcsin{1}</td>
-</tr>
-<tr>
-<td>$\arccos{1}$</td>
-<td>\arccos{1}</td>
-</tr>
-<tr>
-<td>$\arctan{1}$</td>
-<td>\arctan{1}</td>
-</tr>
-<tr>
-<td>双曲函数</td>
-<td></td>
-</tr>
-<tr>
-<td>$\sinh{1}$</td>
-<td>\sinh{1}</td>
-</tr>
-<tr>
-<td>$\cosh{1}$</td>
-<td>\cosh{1}</td>
-</tr>
-<tr>
-<td>$\tanh{1}$</td>
-<td>\tanh{1}</td>
-</tr>
-<tr>
-<td>$\coth{1}$</td>
-<td>\coth{1}</td>
-</tr>
-<tr>
-<td>反双曲函数</td>
-<td></td>
-</tr>
-<tr>
-<td>$\sinh^{-1}{1}$</td>
-<td>\sinh^{-1}{1}</td>
-</tr>
-<tr>
-<td>$\cosh^{-1}{1}$</td>
-<td>\cosh^{-1}{1}</td>
-</tr>
-<tr>
-<td>$\tanh^{-1}{1}$</td>
-<td>\tanh^{-1}{1}</td>
-</tr>
-<tr>
-<td>$\coth^{-1}{1}$</td>
-<td>\coth^{-1}{1}</td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-</tr>
-</tbody>
-</table>
-</div>
-<h1 id="未完待续……"><a href="#未完待续……" class="headerlink" title="未完待续……"></a>未完待续……</h1>]]></content>
+      
+      
+        <tags>
+            
+            <tag> RSA </tag>
+            
+            <tag> 算法 </tag>
+            
+            <tag> 数学 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>md全LaTex数学公式代码教程</title>
+      <link href="/blog2/2024/04/26/md%E5%85%A8LaTex%E6%95%B0%E5%AD%A6%E5%85%AC%E5%BC%8F%E4%BB%A3%E7%A0%81%E6%95%99%E7%A8%8B/"/>
+      <url>/blog2/2024/04/26/md%E5%85%A8LaTex%E6%95%B0%E5%AD%A6%E5%85%AC%E5%BC%8F%E4%BB%A3%E7%A0%81%E6%95%99%E7%A8%8B/</url>
+      
+        <content type="html"><![CDATA[<h1 id="md全LaTex数学公式"><a href="#md全LaTex数学公式" class="headerlink" title="md全LaTex数学公式"></a>md全LaTex数学公式</h1><h3 id="特殊符号"><a href="#特殊符号" class="headerlink" title="特殊符号"></a>特殊符号</h3><div class="table-container"><table><thead><tr><th>特殊字符</th><th>说 明</th><th>实例</th><th>完整字符串</th></tr></thead><tbody><tr><td>$</td><td>数学公式前后加$是行内公式</td><td>数学公式:<strong>a</strong>=<strong>x</strong>+<strong>y</strong></td><td>\$ a=x+y \$</td></tr><tr><td>$$</td><td>数学公式加$$就是读占一行的公式</td><td>独占一行:<br /><strong>a</strong>=<strong>x</strong>+<strong>y</strong></td><td>\$\$ a=x+y \$\$</td></tr><tr><td>\</td><td>转义字符,特殊字符要显示原意,就在前面加\</td><td>$</td><td>\$\\$\$</td></tr></tbody></table></div><h3 id="常用符号"><a href="#常用符号" class="headerlink" title="常用符号"></a>常用符号</h3><div class="table-container"><table><thead><tr><th>运算符</th><th>markdown</th></tr></thead><tbody><tr><td>±</td><td>\pm</td></tr><tr><td>×</td><td>\times</td></tr><tr><td>÷</td><td>\div</td></tr><tr><td>∑</td><td>\sum</td></tr><tr><td>∏</td><td>\prod</td></tr><tr><td>≠</td><td>\neq</td></tr><tr><td>≤</td><td>\leq</td></tr><tr><td>≥</td><td>\geq</td></tr></tbody></table></div><h3 id="希腊字符"><a href="#希腊字符" class="headerlink" title="希腊字符"></a>希腊字符</h3><div class="table-container"><table><thead><tr><th>大写</th><th>markdown</th><th>小写</th><th>markdown</th></tr></thead><tbody><tr><td>A</td><td>A</td><td>α</td><td>\alpha</td></tr><tr><td>B</td><td>B</td><td>β</td><td>\beta</td></tr><tr><td>Γ</td><td>\Gamma</td><td>γ</td><td>\gamma</td></tr><tr><td>Δ</td><td>\Delta</td><td>δ</td><td>\delta</td></tr><tr><td>E</td><td>E</td><td>ϵ</td><td>\epsilon</td></tr><tr><td></td><td></td><td>ε</td><td>\varepsilon</td></tr><tr><td>Z</td><td>Z</td><td>ζ</td><td>\zeta</td></tr><tr><td>H</td><td>H</td><td>η</td><td>\eta</td></tr><tr><td>Θ</td><td>\Theta</td><td>θ</td><td>\theta</td></tr><tr><td>I</td><td>I</td><td>ι</td><td>\iota</td></tr><tr><td>K</td><td>K</td><td>κ</td><td>\kappa</td></tr><tr><td>Λ</td><td>\Lambda</td><td>λ</td><td>\lambda</td></tr><tr><td>M</td><td>M</td><td>μ</td><td>\mu</td></tr><tr><td>N</td><td>N</td><td>ν</td><td>\nu</td></tr><tr><td>Ξ</td><td>\Xi</td><td>ξ</td><td>\xi</td></tr><tr><td>O</td><td>O</td><td>ο</td><td>\omicron</td></tr><tr><td>Π</td><td>\Pi</td><td>π</td><td>\pi</td></tr><tr><td>P</td><td>P</td><td>ρ</td><td>\rho</td></tr><tr><td>Σ</td><td>\Sigma</td><td>σ</td><td>\sigma</td></tr><tr><td>T</td><td>T</td><td>τ</td><td>\tau</td></tr><tr><td>Υ</td><td>\Upsilon</td><td>υ</td><td>\upsilon</td></tr><tr><td>Φ</td><td>\Phi</td><td>ϕ</td><td>\phi</td></tr><tr><td></td><td></td><td>φ</td><td>\varphi</td></tr><tr><td>X</td><td>X</td><td>χ</td><td>\chi</td></tr><tr><td>Ψ</td><td>\Psi</td><td>ψ</td><td>\psi</td></tr><tr><td>Ω</td><td>\Omega</td><td>ω</td><td>\omega</td></tr></tbody></table></div><h3 id="分数微分"><a href="#分数微分" class="headerlink" title="分数微分"></a>分数微分</h3><div class="table-container"><table><thead><tr><th>算式</th><th>markdown</th></tr></thead><tbody><tr><td>分数</td><td></td></tr><tr><td>$\frac{b}{a}$</td><td>\frac{b}{a}</td></tr><tr><td>$\frac{dy}{dx}$</td><td>\frac{dy}{dx}</td></tr><tr><td>$dt$</td><td>dt</td></tr><tr><td>$\partial t$</td><td>\partial t</td></tr><tr><td>$\frac{\partial y}{\partial x}$</td><td>\frac{\partial y}{\partial x}</td></tr><tr><td>$\frac{\partial^{2}}{\partial x<em>{1}\partial x</em>{2}}y$</td><td>\frac{\partial^{2}}{\partial x<em>{1}\partial x</em>{2}}y</td></tr><tr><td>$\begin{matrix}x=a<em>{0}+\frac{1}{a</em>{1}+\frac{1}{a<em>{2}+\frac{1}{a</em>{3}+\frac{1}{a_{4}}}}}\end{matrix}$</td><td>\begin{matrix}x=a<em>{0}+\frac{1}{a</em>{1}+\frac{1}{a<em>{2}+\frac{1}{a</em>{3}+\frac{1}{a_{4}}}}}\end{matrix}</td></tr><tr><td>导数</td><td></td></tr><tr><td>$\dot{a}$</td><td>\dot{a}</td></tr><tr><td>$\ddot{a}$</td><td>\ddot{a}</td></tr><tr><td>${f}^{‘}$</td><td>{f}^{‘}</td></tr><tr><td>${f}^{‘’}$</td><td>{f}^{‘’}</td></tr><tr><td>${f}^{(n)}$</td><td>{f}^{(n)}</td></tr></tbody></table></div><h3 id="根式角标"><a href="#根式角标" class="headerlink" title="根式角标"></a>根式角标</h3><div class="table-container"><table><thead><tr><th>算式</th><th>markdown</th></tr></thead><tbody><tr><td>根式</td><td></td></tr><tr><td>$\sqrt{x}$</td><td>\sqrt{x}</td></tr><tr><td>$\sqrt[n]{x}$</td><td>\sqrt[n]{x}</td></tr><tr><td>上下标</td><td></td></tr><tr><td>${x}^{a}$</td><td>{x}^{a}</td></tr><tr><td>${x}_{b}$</td><td>{x}_{b}</td></tr><tr><td>${x}_{b}^{a}$</td><td>{x}_{b}^{a}</td></tr><tr><td>重音符及其他</td><td></td></tr><tr><td>$\hat{a}$</td><td>\hat{a}</td></tr><tr><td>$\check{a}$</td><td>\check{a}</td></tr><tr><td>$\grave{a}$</td><td>\grave{a}</td></tr><tr><td>$\acute{a}$</td><td>\acute{a}</td></tr><tr><td>$\tilde{a}$</td><td>\tilde{a}</td></tr><tr><td>$\breve{a}$</td><td>\breve{a}</td></tr><tr><td>$\bar{a}$</td><td>\bar{a}</td></tr><tr><td>$\overrightarrow{a}$</td><td>\overrightarrow{a}</td></tr><tr><td>${a}^{\circ }$</td><td>{a}^{\circ }</td></tr><tr><td>$\overleftarrow{abc}$</td><td>\overleftarrow{abc}</td></tr><tr><td>$\underline{abc}$</td><td>\underline{abc}</td></tr><tr><td>$\overbrace{abc}$</td><td>\overbrace{abc}</td></tr><tr><td>$\underbrace{abc}$</td><td>\underbrace{abc}</td></tr></tbody></table></div><h3 id="极限对数"><a href="#极限对数" class="headerlink" title="极限对数"></a>极限对数</h3><div class="table-container"><table><thead><tr><th>算式</th><th>markdown</th></tr></thead><tbody><tr><td>极限</td><td></td></tr><tr><td>$\lim_{}x$</td><td>\lim_{}x</td></tr><tr><td>$\lim_{x\rightarrow 0}x$</td><td>\lim_{x\rightarrow 0}x</td></tr><tr><td>$\lim_{x\rightarrow \infty }x$</td><td>\lim_{x\rightarrow \infty }x</td></tr><tr><td>$\max_{x∈[0,1]}x$</td><td>\max_{x∈[0,1]}x</td></tr><tr><td>$\min_{x∈[0,1]}x$</td><td>\min_{x∈[0,1]}x</td></tr><tr><td>对数指数</td><td></td></tr><tr><td>$\log_{2}{3}$</td><td>\log_{2}{3}</td></tr><tr><td>$\lg{2}$</td><td>\lg{2}</td></tr><tr><td>$\ln{2}$</td><td>\ln{2}</td></tr><tr><td>$\exp{1}$</td><td>\exp{1}</td></tr></tbody></table></div><h3 id="三角函数"><a href="#三角函数" class="headerlink" title="三角函数"></a>三角函数</h3><div class="table-container"><table><thead><tr><th>算式</th><th>markdown</th></tr></thead><tbody><tr><td>三角函数</td><td></td></tr><tr><td>$\sin{1}$</td><td>\sin{1}</td></tr><tr><td>$\cos{1}$</td><td>\cos{1}</td></tr><tr><td>$\tan{1}$</td><td>\tan{1}</td></tr><tr><td>$\cot{1}$</td><td>\cot{1}</td></tr><tr><td>$\sec{1}$</td><td>\sec{1}</td></tr><tr><td>$\csc{1}$</td><td>\csc{1}</td></tr><tr><td>反三角函数</td><td></td></tr><tr><td>$\sin^{-1}{1}$</td><td>\sin^{-1}{1}</td></tr><tr><td>$\cos^{-1}{1}$</td><td>\cos^{-1}{1}</td></tr><tr><td>$\tan^{-1}{1}$</td><td>\tan^{-1}{1}</td></tr><tr><td>$\cot^{-1}{1}$</td><td>\cot^{-1}{1}</td></tr><tr><td>$\sec^{-1}{1}$</td><td>\sec^{-1}{1}</td></tr><tr><td>$\csc^{-1}{1}$</td><td>\csc^{-1}{1}</td></tr><tr><td>$\arcsin{1}$</td><td>\arcsin{1}</td></tr><tr><td>$\arccos{1}$</td><td>\arccos{1}</td></tr><tr><td>$\arctan{1}$</td><td>\arctan{1}</td></tr><tr><td>双曲函数</td><td></td></tr><tr><td>$\sinh{1}$</td><td>\sinh{1}</td></tr><tr><td>$\cosh{1}$</td><td>\cosh{1}</td></tr><tr><td>$\tanh{1}$</td><td>\tanh{1}</td></tr><tr><td>$\coth{1}$</td><td>\coth{1}</td></tr><tr><td>反双曲函数</td><td></td></tr><tr><td>$\sinh^{-1}{1}$</td><td>\sinh^{-1}{1}</td></tr><tr><td>$\cosh^{-1}{1}$</td><td>\cosh^{-1}{1}</td></tr><tr><td>$\tanh^{-1}{1}$</td><td>\tanh^{-1}{1}</td></tr><tr><td>$\coth^{-1}{1}$</td><td>\coth^{-1}{1}</td></tr><tr><td></td><td></td></tr><tr><td></td></tr></tbody></table></div><h1 id="未完待续……"><a href="#未完待续……" class="headerlink" title="未完待续……"></a>未完待续……</h1>]]></content>
+      
+      
       <categories>
-        <category>教程</category>
+          
+          <category> 教程 </category>
+          
       </categories>
-      <tags>
-        <tag>数学</tag>
-        <tag>LaTex</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Hello World</title>
-    <url>/2024/04/21/hello-world/</url>
-    <content><![CDATA[<p>欢迎来到我的个人博客!这是我的第一篇文章。查看文档了解更多信息。</p>
-<h2 id="快速启动"><a href="#快速启动" class="headerlink" title="快速启动"></a>快速启动</h2><h3 id="创建一个新帖子"><a href="#创建一个新帖子" class="headerlink" title="创建一个新帖子"></a>创建一个新帖子</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-<p>更多信息: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="运行服务器"><a href="#运行服务器" class="headerlink" title="运行服务器"></a>运行服务器</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>更多信息: <a href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="生成静态页面"><a href="#生成静态页面" class="headerlink" title="生成静态页面"></a>生成静态页面</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>更多信息: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="部署到远程站点"><a href="#部署到远程站点" class="headerlink" title="部署到远程站点"></a>部署到远程站点</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>更多信息: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
-]]></content>
+      
+      
+        <tags>
+            
+            <tag> 数学 </tag>
+            
+            <tag> LaTex </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>Hello World</title>
+      <link href="/blog2/2024/04/21/hello-world/"/>
+      <url>/blog2/2024/04/21/hello-world/</url>
+      
+        <content type="html"><![CDATA[<p>欢迎来到我的个人博客!这是我的第一篇文章。查看文档了解更多信息。</p><h2 id="快速启动"><a href="#快速启动" class="headerlink" title="快速启动"></a>快速启动</h2><h3 id="创建一个新帖子"><a href="#创建一个新帖子" class="headerlink" title="创建一个新帖子"></a>创建一个新帖子</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure><p>更多信息: <a href="https://hexo.io/docs/writing.html">Writing</a></p><h3 id="运行服务器"><a href="#运行服务器" class="headerlink" title="运行服务器"></a>运行服务器</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure><p>更多信息: <a href="https://hexo.io/docs/server.html">Server</a></p><h3 id="生成静态页面"><a href="#生成静态页面" class="headerlink" title="生成静态页面"></a>生成静态页面</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure><p>更多信息: <a href="https://hexo.io/docs/generating.html">Generating</a></p><h3 id="部署到远程站点"><a href="#部署到远程站点" class="headerlink" title="部署到远程站点"></a>部署到远程站点</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure><p>更多信息: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>]]></content>
+      
+      
       <categories>
-        <category>demo</category>
+          
+          <category> demo </category>
+          
       </categories>
-      <tags>
-        <tag>Hello World</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>站点转移</title>
-    <url>/2024/06/11/%E7%AB%99%E7%82%B9%E8%BD%AC%E7%A7%BB/</url>
-    <content><![CDATA[<h1 id="站点已迁移至-lt-a-href-quot-https-flower-star-dream-github-io-quot-gt-https-flower-star-dream-github-io-lt-a-gt"><a href="#站点已迁移至-lt-a-href-quot-https-flower-star-dream-github-io-quot-gt-https-flower-star-dream-github-io-lt-a-gt" class="headerlink" title="站点已迁移至 &lt;a href=&quot;https://flower-star-dream.github.io/&quot;&gt;https://flower-star-dream.github.io/`&lt;/a&gt;`"></a>站点已迁移至 <code>&lt;a href=&quot;https://flower-star-dream.github.io/&quot;&gt;</code><a href="https://flower-star-dream.github.io/`">https://flower-star-dream.github.io/`</a>&lt;/a&gt;`</h1>]]></content>
-      <tags>
-        <tag>-更新</tag>
-      </tags>
-  </entry>
+      
+      
+        <tags>
+            
+            <tag> Hello World </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+  
+  
 </search>
